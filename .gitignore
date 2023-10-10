@@ -1,0 +1,9 @@
+$RECYCLE.BIN/
+code/
+django/
+django-admin/
+free/
+instll/
+pip/
+startproject/
+venvs/
