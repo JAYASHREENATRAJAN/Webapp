@@ -1,0 +1,77 @@
+<!-- employer_dashboard.html -->
+{% extends 'intern_platform/employer_base.html' %}
+{% block title %}Employer Dashboard{% endblock %}
+
+{% block content %}
+<style>
+    .accepted-status {
+    color: darkblue; /* or you can use the hex code #00008B */
+    font-weight: bold;
+}
+</style>
+    <div class="container">
+        <h2 class="text-center mb-4">Employer Dashboard</h2>
+
+        <!-- List of internships posted by the employer -->
+        <div class="row">
+            {% for item in internship_applications %}
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h3 class="card-title">{{ item.internship.title }}</h3>
+                            <p class="card-text">{{ item.internship.description }}</p>
+                            <p class="card-text"><strong>Industry:</strong> {{ item.internship.industry }}</p>
+                            <p class="card-text"><strong>Date Posted:</strong> {{ item.internship.start_date }}</p>
+                            <div class="text-center">
+                                <a href="{% url 'intern_platform:edit_internship' item.internship.id %}" class="btn btn-primary mr-2">Edit</a>
+                                <a href="{% url 'intern_platform:delete_internship' item.internship.id %}" class="btn btn-danger">Delete</a>
+                            </div>
+
+                            <!-- Applications received for the internship -->
+                            <h4 class="mt-3">Applications:</h4>
+                            <ul class="list-group">
+                                {% if item.applications %}
+                                    {% for application in item.applications %}
+                                    <li class="list-group-item text-center {% if application.status == 'Accepted' %} accepted-status {% endif %}">
+                                        {% if application.status == 'Accepted' %}
+                                            Already Accepted
+                                        {% endif %}
+                                    </li>
+                                            <p><strong>Applicant:</strong> {{ application.user.username }}</p>
+                                            <p><strong>Email:</strong> {{ application.user.email }}</p>
+                                            <p><strong>Date Applied:</strong> {{ application.submitted_at }}</p>
+                                            <a href="{{ application.resume.url }}" class="btn btn-secondary" target="_blank">View Resume</a>
+                                            <a href="{% url 'intern_platform:view_intern_profile' application.user.id %}" class="btn btn-primary" target="_blank">View Profile</a>
+                                            <form action="{% url 'intern_platform:accept_application' application.id %}" method="post" style="display:inline;">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-success">Accept</button>
+                                            </form>
+                                            <form action="{% url 'intern_platform:reject_application' application.id %}" method="post" style="display:inline;">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-danger">Reject</button>
+                                            </form>
+
+
+                                            
+                                        </li>
+                                    {% endfor %}
+                                {% else %}
+                                    <li class="list-group-item">No applications received.</li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-md-12">
+                    <div class="alert alert-info">No internships posted.</div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Add JavaScript code here if needed
+    </script>
+{% endblock %}

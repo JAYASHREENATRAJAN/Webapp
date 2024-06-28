@@ -1,0 +1,23 @@
+{% extends 'employer_base.html' %}
+{% block title %}Edit Internship{% endblock %}
+
+{% block content %}
+    <h2>Edit Internship</h2>
+    <!-- Form to edit internship details -->
+    <form method="post">
+        {% csrf_token %}
+        <!-- Include fields to edit internship details -->
+        <label for="title">Title:</label><br>
+        <input type="text" id="title" name="title" value="{{ internship.title }}"><br>
+
+        <label for="description">Description:</label><br>
+        <textarea id="description" name="description">{{ internship.description }}</textarea><br>
+
+        <label for="industry">Industry:</label><br>
+        <input type="text" id="industry" name="industry" value="{{ internship.industry }}"><br>
+
+        <!-- Add more fields as needed -->
+
+        <input type="submit" value="Save Changes">
+    </form>
+{% endblock %}

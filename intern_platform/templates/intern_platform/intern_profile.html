@@ -1,0 +1,315 @@
+{% extends 'intern_platform/student_base.html' %}
+{% load static %}
+{% block title %}Intern Profile{% endblock %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intern's Profile</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="file"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        .error {
+            color: red;
+            margin-top: 5px;
+        }
+
+        .table-container {
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .add-row {
+            background-color: #4CAF50;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .remove-row {
+            background-color: #f44336;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Intern's Profile</h1>
+        <form id="profileForm" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <label for="firstName">First Name:</label>
+            <input type="text" id="firstName" name="firstName" value="{{ profile.first_name }}">
+            <span class="error" id="firstNameError"></span><br>
+
+            <label for="lastName">Last Name:</label>
+            <input type="text" id="lastName" name="lastName" value="{{ profile.last_name }}">
+            <span class="error" id="lastNameError"></span><br>
+
+            <label>Please indicate your gender:</label><br>
+            <input type="radio" id="genderMale" name="gender" value="male" {% if profile.gender == "male" %}checked{% endif %}>
+            <label for="genderMale">Male</label>
+            <input type="radio" id="genderFemale" name="gender" value="female" {% if profile.gender == "female" %}checked{% endif %}>
+            <label for="genderFemale">Female</label>
+            <input type="radio" id="genderOther" name="gender" value="other" {% if profile.gender == "other" %}checked{% endif %}>
+            <label for="genderOther">Other</label>
+            <span class="error" id="genderError"></span><br>
+
+            <label for="dob">Date of Birth:</label>
+            <input type="date" id="dob" name="dob" value="{{ profile.dob }}">
+            <span class="error" id="dobError"></span><br>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" value="{{ request.user.email }}" readonly><br>
+
+            <label for="additionalEmail">Additional Email:</label>
+            <input type="email" id="additionalEmail" name="additionalEmail" value="{{ profile.additional_email }}">
+            <span class="error" id="additionalEmailError"></span><br>
+
+            <label for="phoneNumber">Phone Number:</label>
+            <input type="text" id="phoneNumber" name="phoneNumber" value="{{ profile.phone_number }}">
+            <span class="error" id="phoneNumberError"></span><br>
+
+            <label for="address">Address:</label><br>
+            <input type="text" id="streetAddress" name="streetAddress" placeholder="Street Address" value="{{ profile.street_address }}"><br>
+            <input type="text" id="streetAddress2" name="streetAddress2" placeholder="Street Address Line 2" value="{{ profile.street_address2 }}"><br>
+            <input type="text" id="city" name="city" placeholder="City" value="{{ profile.city }}"><br>
+            <input type="text" id="state" name="state" placeholder="State / Province" value="{{ profile.state }}"><br>
+            <input type="text" id="zipCode" name="zipCode" placeholder="Postal / Zip Code" value="{{ profile.zip_code }}">
+            <span class="error" id="addressError"></span><br>
+
+            <label for="maritalStatus">Marital Status:</label><br>
+            <input type="radio" id="single" name="maritalStatus" value="single" {% if profile.marital_status == "single" %}checked{% endif %}>
+            <label for="single">Single</label><br>
+            <input type="radio" id="married" name="maritalStatus" value="married" {% if profile.marital_status == "married" %}checked{% endif %}>
+            <label for="married">Married</label><br>
+            <input type="radio" id="divorced" name="maritalStatus" value="divorced" {% if profile.marital_status == "divorced" %}checked{% endif %}>
+            <label for="divorced">Divorced</label><br>
+            <input type="radio" id="widowed" name="maritalStatus" value="widowed" {% if profile.marital_status == "widowed" %}checked{% endif %}>
+            <label for="widowed">Widowed</label>
+            <span class="error" id="maritalStatusError"></span><br>
+
+            <label for="resume">Upload Resume:</label>
+            <input type="file" id="resume" name="resume" value="{{ profile.resume }}">
+            <span class="error" id="resumeError"></span><br>
+
+            <div class="table-container">
+                <label for="education">Educational Background:</label>
+                <table id="educationTable">
+                    <tr>
+                        <th>Institution</th>
+                        <th>Percentage</th>
+                        <th>Year of Passout</th>
+                        <th>Course</th>
+                        <th>Action</th>
+                    </tr>
+                    {% for education in profile.educational_background.all %}
+                    <tr>
+                        <td><input type="text" name="institution[]" value="{{ education.institution }}"></td>
+                        <td><input type="text" name="percentage[]" value="{{ education.percentage }}"></td>
+                        <td><input type="text" name="yearPassout[]" value="{{ education.year_passout }}"></td>
+                        <td><input type="text" name="course[]" value="{{ education.course }}"></td>
+                        <td><button type="button" class="remove-row">Remove</button></td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                <button type="button" class="add-row">Add Row</button>
+            </div>
+            
+            <label for="skills">Skills:</label>
+            <textarea id="skills" name="skills" rows="4" placeholder="List your skills here...">{{ profile.skills }}</textarea><br>
+            
+            <label for="experience">Experience:</label>
+            <textarea id="experience" name="experience" rows="4" placeholder="List your work experience here...">{{ profile.experience }}</textarea><br>
+            
+            
+            <a href="{% url 'intern_platform:intern_generate_report' %}">Generate Report</a> <!-- Add this line -->
+            <form id="profileForm" method="POST" enctype="multipart/form-data">
+            
+            
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+
+    <script>
+        document.querySelector(".add-row").addEventListener("click", function() {
+            var table = document.getElementById("educationTable");
+            var newRow = table.insertRow();
+            newRow.innerHTML = `
+                <td><input type="text" name="institution[]" ></td>
+                <td><input type="text" name="percentage[]" ></td>
+                <td><input type="text" name="yearPassout[]" ></td>
+                <td><input type="text" name="yearPassout[]" ></td>
+                <td><button type="button" class="remove-row">Remove</button></td>
+            `;
+            newRow.querySelector(".remove-row").addEventListener("click", function() {
+                table.deleteRow(newRow.rowIndex);
+            });
+        });
+
+        document.querySelectorAll(".remove-row").forEach(button => {
+            button.addEventListener("click", function() {
+                var table = document.getElementById("educationTable");
+                table.deleteRow(button.closest("tr").rowIndex);
+            });
+        });
+
+        document.getElementById("profileForm").addEventListener("submit", function(event) {
+            let firstName = document.getElementById("firstName").value;
+            let lastName = document.getElementById("lastName").value;
+            let gender = document.querySelector('input[name="gender"]:checked');
+            let dob = document.getElementById("dob").value;
+            let additionalEmail = document.getElementById("additionalEmail").value;
+            let phoneNumber = document.getElementById("phoneNumber").value;
+            let streetAddress = document.getElementById("streetAddress").value;
+            let city = document.getElementById("city").value;
+            let state = document.getElementById("state").value;
+            let zipCode = document.getElementById("zipCode").value;
+            let maritalStatus = document.querySelector('input[name="maritalStatus"]:checked');
+            let resume = document.getElementById("resume").files[0];
+            let errors = false;
+
+            // Validation for first name
+            if (firstName.trim() === "") {
+                document.getElementById("firstNameError").innerText = "First name is required";
+                errors = true;
+            } else {
+                document.getElementById("firstNameError").innerText = "";
+            }
+
+            // Validation for last name
+            if (lastName.trim() === "") {
+                document.getElementById("lastNameError").innerText = "Last name is required";
+                errors = true;
+            } else {
+                document.getElementById("lastNameError").innerText = "";
+            }
+
+            // Validation for gender
+            if (!gender) {
+                document.getElementById("genderError").innerText = "Gender is required";
+                errors = true;
+            } else {
+                document.getElementById("genderError").innerText = "";
+            }
+
+            // Validation for date of birth
+            if (dob.trim() === "") {
+                document.getElementById("dobError").innerText = "Date of birth is required";
+                errors = true;
+            } else {
+                document.getElementById("dobError").innerText = "";
+            }
+
+            // Validation for additional email
+            if (additionalEmail.trim() === "") {
+                document.getElementById("additionalEmailError").innerText = "Additional email is required";
+                errors = true;
+            } else {
+                document.getElementById("additionalEmailError").innerText = "";
+            }
+
+            // Validation for phone number
+            if (phoneNumber.trim() === "") {
+                document.getElementById("phoneNumberError").innerText = "Please enter a valid phone number";
+                errors = true;
+            } else {
+                document.getElementById("phoneNumberError").innerText = "";
+            }
+
+            // Validation for address
+            if (streetAddress.trim() === "" || city.trim() === "" || state.trim() === "" || zipCode.trim() === "") {
+                document.getElementById("addressError").innerText = "Address is required";
+                errors = true;
+            } else {
+                document.getElementById("addressError").innerText = "";
+            }
+
+            // Validation for marital status
+            if (!maritalStatus) {
+                document.getElementById("maritalStatusError").innerText = "Marital status is required";
+                errors = true;
+            } else {
+                document.getElementById("maritalStatusError").innerText = "";
+            }
+
+            // Validation for resume
+            if (!resume) {
+                document.getElementById("resumeError").innerText = "Resume upload is required";
+                errors = true;
+            } else {
+                document.getElementById("resumeError").innerText = "";
+            }
+
+            // Add more validations for other fields
+
+            if (errors) {
+                event.preventDefault(); // Prevent form submission if there are errors
+            }
+        });
+    </script>
+</body>
+</html>
+{% endblock %}

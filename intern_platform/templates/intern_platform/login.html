@@ -1,0 +1,151 @@
+{% extends 'intern_platform/base.html' %}
+{% block title %}Login - Intern Platform{% endblock %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% include 'intern_platform/includes/messaging.html' %}
+{% block content %}
+<body>
+<style>
+    .error-message {
+        color: #ff6347;
+        font-weight: bold;
+        margin-top: 5px;
+        background-color: #ffe6e6;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ff6347;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .error {
+    color: red;
+     }
+    /* Add animation to the login form */
+    .card {
+        animation: fadeIn 1s ease-in-out;
+    }
+
+    /* Define keyframes for animations */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="card mt-5">
+            <div class="card-body">
+                <h2 class="card-title text-center">Login</h2>
+                
+                <!-- Display error message if credentials are invalid -->
+                {% if error %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+                {% endif %}
+                {% if messages %}
+                <div class="alert alert-danger" role="alert">
+                    {% for message in messages %}
+                        {{ message }}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <form method="post" id="login-form" class="mt-4" action="{% url 'intern_platform:login' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username:</label>
+                        <input type="text" class="form-control" id="username" name="username">
+                        <div id="username-error" class="error"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password:</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="password" name="password">
+
+                            <button class="btn btn-outline-secondary" type="button" id="show-password">Show</button>
+                            
+                        </div>
+                        
+                    </div>
+                    <div class="mb-3 form-check">
+                        <div id="password-error" class="error"></div>
+                        <input type="checkbox" class="form-check-input" id="remember-me">
+                        <label class="form-check-label" for="remember-me">Remember me</label>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary btn-block">Sign in</button>
+                        <p>New user? <a href="{% url 'intern_platform:register' %}">Register</a></p>
+                       <!---<small class="text-muted">
+                            <a href="{% url 'intern_platform:password_reset' %}">Forgot password?</a>
+                        </small>--> 
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+ function isEmpty(value) {
+        return !value.trim(); // Trim whitespace and check if empty
+    }
+
+    // Function to display error message
+    function displayError(input, message) {
+        const errorDiv = input.nextElementSibling; // Get the next sibling element
+        errorDiv.textContent = message; // Set error message
+    }
+
+    // Function to clear error message
+    function clearError(input) {
+        const errorDiv = input.nextElementSibling; // Get the next sibling element
+        errorDiv.textContent = ''; // Clear error message
+    }
+
+    // Form submission event listener
+    document.getElementById('login-form').addEventListener('submit', function(event) {
+        // Get username and password inputs
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+
+        // Check if username is empty
+        if (isEmpty(usernameInput.value)) {
+            displayError(usernameInput, 'Username is required.');
+            event.preventDefault(); // Prevent form submission
+        } else {
+            clearError(usernameInput); // Clear any previous error
+        }
+
+        // Check if password is empty
+        if (isEmpty(passwordInput.value)) {
+            displayError(passwordInput, 'Password is required.');
+            event.preventDefault(); // Prevent form submission
+        } else {
+            clearError(passwordInput); // Clear any previous error
+        }
+    });
+
+    const passwordInput = document.getElementById('password');
+    const showPasswordButton = document.getElementById('show-password');
+
+    showPasswordButton.addEventListener('click', function() {
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            this.textContent = 'Hide';
+        } else {
+            passwordInput.type = 'password';
+            this.textContent = 'Show';
+        }
+    });
+</script>
+
+</body>
+
+{% endblock %}

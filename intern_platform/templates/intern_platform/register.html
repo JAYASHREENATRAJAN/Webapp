@@ -1,0 +1,601 @@
+{% extends 'intern_platform/normbase.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Register - Intern Platform{% endblock %}
+{% include 'intern_platform/includes/messaging.html' %}
+
+{% block content %}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+    }
+    .container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 20px;
+        background: #fff;
+    }
+    form {
+        max-width: 600px;
+        margin: 2rem auto;
+        padding: 2rem;
+        border-radius: 10px;
+        background: linear-gradient(145deg, #f0f0f0, #cacaca);
+        box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1), -5px -5px 15px rgba(255, 255, 255, 0.7);
+        font-family: 'Roboto', sans-serif;
+    }
+    .form-control {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        border: none;
+        border-radius: 25px;
+        background: #e0e0e0;
+        box-shadow: inset 5px 5px 10px #bebebe, inset -5px -5px 10px #ffffff;
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+    }
+    .form-control:focus {
+        outline: none;
+        box-shadow: inset 5px 5px 10px #bebebe, inset -5px -5px 10px #ffffff, 0 0 10px rgba(81, 203, 238, 1);
+    }
+    label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        display: block;
+        color: #333;
+    }
+    button {
+        display: inline-block;
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 25px;
+        border: none;
+        background: linear-gradient(145deg, #6e7eff, #889bff);
+        box-shadow: 5px 5px 10px #5a6fe8, -5px -5px 10px #99acff;
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 10px;
+    }
+    button:hover {
+        background: linear-gradient(145deg, #5a6fe8, #99acff);
+    }
+    .form-control-file {
+        border: 2px dashed #bbb;
+        padding: 20px;
+        border-radius: 10px;
+        background: #f5f5f5;
+        transition: background-color 0.3s ease;
+    }
+    .form-control-file:hover {
+        background: #e0e0e0;
+    }
+    textarea.form-control {
+        height: 150px;
+        resize: vertical;
+    }
+    .hidden {
+        display: none;
+    }
+    .form-header {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .form-header h2 {
+        font-size: 24px;
+        margin: 0;
+        color: #333;
+    }
+    .form-footer {
+        text-align: center;
+    }
+    .btn {
+        display: block;
+        width: 100%;
+        padding: 15px;
+        font-size: 16px;
+        border: none;
+        border-radius: 50px;
+        background: linear-gradient(45deg, #4a90e2, #647dee);
+        color: white;
+        cursor: pointer;
+        transition: background 0.3s ease;
+        text-align: center;
+    }
+    .btn:hover {
+        background: linear-gradient(45deg, #3a80d2, #536dcc);
+    }
+    .error {
+        color: red;
+        font-size: 14px;
+    }
+    .form-footer {
+        text-align: center;
+    }
+    .error-message {
+        color: #ff6347;
+        font-weight: bold;
+        margin-top: 5px;
+        background-color: #ffe6e6;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ff6347;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .form-control.error {
+        border-color: #ff6347;
+    }
+    .show-password-button {
+        background-color: #ddd;
+        border: none;
+        color: #333;
+        padding: 5px 10px;
+        cursor: pointer;
+        border-radius: 5px;
+        margin-left: 5px;
+    }
+    .success {.error {
+    color: red;
+     }
+    color: green;
+     }
+
+    
+
+
+    .hidden { display: none; }
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; margin-bottom: 5px; }
+    .form-group input, .form-group select { width: 100%; padding: 8px; box-sizing: border-box; }
+    .form-group .error { color: red; margin-top: 5px; }
+</style>
+<head>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+</head>
+
+<div class="form-header">
+    <h2>Register</h2>
+</div>
+{% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+<form id="UserRegistrationForm" method="post" enctype="multipart/form-data" novalidate>
+
+    {% csrf_token %}
+    
+    <div class="form-group">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        <div class="error" id="username-error"></div>
+        {% if user_errors.username %}{{ user_errors.username }}{% endif %}
+    </div>
+    
+    <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <input type="text" id="verification-code" placeholder="Enter verification code" style="display: none;">
+        <button type="button" id="send-verification">Send Verification Code</button>
+        <button type="button" id="verify-email">Verify</button>
+        <div class="error" id="email-error"></div>
+        {% if user_errors.email %}{{ user_errors.email }}{% endif %}
+    </div>
+    <p id="response"></p>
+
+    <div class="form-group">
+        <label for="user_type">User Type:</label>
+        <select id="user_type" name="user_type" required>
+            <option value="">Select user type</option>
+            <option value="intern">Intern</option>
+            <option value="employer">Employer</option>
+        </select>
+        <div class="error" id="user_type-error"></div>
+        {% if user_errors.user_type %}{{ user_errors.user_type }}{% endif %}
+    </div>
+    
+    <div class="form-group">
+        <label for="password1">Password:</label>
+        <input type="password" id="password1" name="password1" required>
+        <div class="error" id="password1-error"></div>
+        {% if user_errors.password1 %}{{ user_errors.password1 }}{% endif %}
+    </div>
+
+    <div class="form-group">
+        <label for="password2">Confirm Password:</label>
+        <input type="password" id="password2" name="password2" required>
+        <div class="error" id="password2-error"></div>
+        {% if user_errors.password2 %}{{ user_errors.password2 }}{% endif %}
+    </div>
+    
+    <div id="student-fields" class="hidden">
+        <!-- Student specific fields -->
+        <div class="form-group">
+            <label for="college">College:</label>
+            <input type="text" id="college" name="college">
+            <div class="error" id="college-error"></div>
+            {% if student_errors.college %}{{ student_errors.college }}{% endif %}
+        </div>
+        <div class="form-group">
+            <label for="university">University:</label>
+            <input type="text" id="university" name="university">
+            <div class="error" id="university-error"></div>
+            {% if student_errors.university %}{{ student_errors.university }}{% endif %}
+        </div>
+        <div class="form-group">
+            <label for="experience">Experience:</label>
+            <input type="text" id="experience" name="experience">
+            <div class="error" id="experience-error"></div>
+            {% if student_errors.experience %}{{ student_errors.experience }}{% endif %}
+        </div>
+    </div>
+
+    <div id="employer-fields" class="hidden">
+        <!-- Employer specific fields -->
+        <div class="form-group">
+            <label for="company_name">Company Name:</label>
+            <input type="text" id="company_name" name="company_name">
+            <div class="error" id="company_name-error"></div>
+            {% if employer_errors.company_name %}{{ employer_errors.company_name }}{% endif %}
+        </div>
+        <div class="form-group">
+            <label for="company_description">Company Description:</label>
+            <input type="text" id="company_description" name="company_description">
+            <div class="error" id="company_description-error"></div>
+            {% if employer_errors.company_description %}{{ employer_errors.company_description }}{% endif %}
+        </div>
+        <div class="form-group">
+            <label for="location">Location:</label>
+            <input type="text" id="location" name="location">
+            <div class="error" id="location-error"></div>
+            {% if employer_errors.location %}{{ employer_errors.location }}{% endif %}
+        </div>
+        <div class="form-group">
+            <label for="website">Website:</label>
+            <input type="text" id="website" name="website">
+            <div class="error" id="website-error"></div>
+            {% if employer_errors.website %}{{ employer_errors.website }}{% endif %}
+        </div>
+    </div>
+    
+    <div class="form-footer">
+        <button type="submit" class="btn btn-primary">Register</button>
+        <p>Already have an account? <a href="{% url 'intern_platform:login' %}">Login here</a></p>
+    </div>
+</form>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+const emailInput = document.getElementById('email');
+const sendVerificationButton = document.getElementById('send-verification');
+const verifyEmailButton = document.getElementById('verify-email');
+const verificationCodeInput = document.getElementById('verification-code');
+const responseElement = document.getElementById('response');
+let isVerificationCodeSent = false;
+
+// Function to check if the email address is valid
+function isValidEmail(email) {
+    // Regular expression to validate email addresses
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailPattern.test(email);
+}
+
+// Function to get the CSRF token from the cookie
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Check if the cookie name matches the given name
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                // Decode and return the cookie value
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+sendVerificationButton.addEventListener('click', function() {
+    const email = emailInput.value;
+    if (isValidEmail(email)) {
+        fetch(`/send-verification-email/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({ email: email })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message === 'Verification email sent successfully.') {
+                responseElement.textContent = 'Verification email sent. Please check your inbox and enter the verification code.';
+                responseElement.classList.add('success');
+                // Show the verification code input field and enable the "Verify Email" button
+                verificationCodeInput.style.display = 'block';
+                verifyEmailButton.disabled = false;
+                isVerificationCodeSent = true;
+            } else {
+                responseElement.textContent = 'Failed to send verification email.';
+                responseElement.classList.add('error');
+            }
+        })
+        .catch(error => {
+            responseElement.textContent = 'Error sending verification email.';
+            responseElement.classList.add('error');
+        });
+    } else {
+        responseElement.textContent = 'Please enter a valid email address.';
+        responseElement.classList.add('error');
+    }
+});
+
+verifyEmailButton.addEventListener('click', function() {
+    if (isVerificationCodeSent) {
+        const verificationCode = verificationCodeInput.value;
+        // Perform verification code validation here
+        // You can send the verification code to the server and validate it
+        // For simplicity, let's assume the verification code is correct
+        if (verificationCode) {
+            fetch('/verify-email/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({ email: emailInput.value, verification_code: verificationCode })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === 'Email verified successfully.') {
+                    responseElement.textContent = 'Email verified successfully.';
+                    responseElement.classList.add('success');
+                    isEmailVerified = true;
+                    // Allow the user to submit the form
+                    
+                    
+                } else {
+                    responseElement.textContent = 'Invalid verification code.';
+                    responseElement.classList.add('error');
+                }
+            })
+            .catch(error => {
+                responseElement.textContent = 'Error verifying email.';
+                responseElement.classList.add('error');
+            });
+        } else {
+            responseElement.textContent = 'Please enter the verification code.';
+            responseElement.classList.add('error');
+        }
+    } else {
+        responseElement.textContent = 'Please click "Send Verification Code" first.';
+        responseElement.classList.add('error');
+    }
+});
+
+function submitForm() {
+    // Add code to submit the form
+    // For example:
+    // document.getElementById('registration-form').submit();
+    if (!isEmailVerified) {
+        // If email is not verified, display an alert to verify the email first
+        alert('Please verify your email before submitting the form.');
+        return;
+    }
+
+    // If email is verified, submit the form
+    document.getElementById('UserRegistrationForm').submit();
+}
+
+    
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    var userTypeField = document.getElementById('user_type');
+    var studentFields = document.getElementById('student-fields');
+    var employerFields = document.getElementById('employer-fields');
+
+    function toggleFields() {
+        if (userTypeField.value === 'intern') {
+            studentFields.classList.remove('hidden');
+            employerFields.classList.add('hidden');
+        } else if (userTypeField.value === 'employer') {
+            studentFields.classList.add('hidden');
+            employerFields.classList.remove('hidden');
+        } else {
+            studentFields.classList.add('hidden');
+            employerFields.classList.add('hidden');
+        }
+    }
+
+    userTypeField.addEventListener('change', toggleFields);
+    toggleFields();
+
+    
+
+    var form = document.getElementById('UserRegistrationForm');
+
+    form.addEventListener('submit', function(event) {
+        var emailError = document.getElementById('email-error').textContent;
+        if (emailError) {
+            alert('Please verify your email address before registering.');
+            event.preventDefault(); // Prevent form submission
+        }
+    });
+
+    
+
+    document.getElementById('username').addEventListener('blur', function() {
+            var username = this.value;
+            if (username) {
+                fetch(`/ajax/validate-username/?username=${username}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        var errorDiv = document.getElementById('username-error');
+                        if (data.exists) {
+                            errorDiv.textContent = 'Username already exists. Please choose a different one.';
+                        } else {
+                            errorDiv.textContent = '';
+                        }
+                    });
+            }
+        });
+    
+    document.getElementById('email').addEventListener('blur', function() {
+            var email = this.value;
+            if (email) {
+                fetch(`/ajax/validate-email/?email=${email}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        var errorDiv = document.getElementById('email-error');
+                        if (data.exists) {
+                            errorDiv.textContent = 'Email already exists. Please choose a different one.';
+                            
+                        }
+                        else{ errorDiv.textContent = '';}
+                    });
+            }
+        });
+
+        form.addEventListener('submit', function(event) {
+        var valid = true;
+
+    
+    
+
+
+        // Clear previous errors
+        document.querySelectorAll('.error').forEach(function(errorDiv) {
+            errorDiv.textContent = '';
+        });
+
+        // Check for empty fields
+        if (!document.getElementById('username').value) {
+            document.getElementById('username-error').textContent = 'Username is required.';
+            valid = false;
+        }
+        if (!document.getElementById('email').value) {
+            document.getElementById('email-error').textContent = 'Email is required.';
+            valid = false;
+        }
+        if (!document.getElementById('user_type').value) {
+            document.getElementById('user_type-error').textContent = 'User type is required.';
+            valid = false;
+        }
+        if (!document.getElementById('password1').value) {
+            document.getElementById('password1-error').textContent = 'Password is required.';
+            valid = false;
+        }
+        if (!document.getElementById('password2').value) {
+            document.getElementById('password2-error').textContent = 'Password confirmation is required.';
+            valid = false;
+        }
+
+        var email = document.getElementById('email').value.trim();
+        var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(email)) {
+            document.getElementById('email-error').textContent = 'Invalid format. Enter a valid email address.';
+            valid = false;
+        }
+
+        if (!valid) {
+            event.preventDefault(); // Prevent form submission if invalid
+        }
+
+        if (valid) {
+            form.submit(); // Submit the form if all validation passes
+        }
+    });
+
+    const passwordField1 = document.querySelector('input[name="password1"]');
+    const passwordField2 = document.querySelector('input[name="password2"]');
+    const passwordError1 = document.createElement('div');
+    const passwordError2 = document.createElement('div');
+    passwordError1.classList.add('error-message');
+    passwordError2.classList.add('error-message');
+
+    passwordField1.parentNode.appendChild(passwordError1);
+    passwordField2.parentNode.appendChild(passwordError2);
+
+    const showPasswordButton1 = document.createElement('button');
+    showPasswordButton1.textContent = 'Show';
+    const showPasswordButton2 = document.createElement('button');
+    showPasswordButton2.textContent = 'Show';
+
+    showPasswordButton1.classList.add('show-password-button');
+    showPasswordButton2.classList.add('show-password-button');
+
+    passwordField1.parentNode.insertBefore(showPasswordButton1, passwordField1.nextSibling);
+    passwordField2.parentNode.insertBefore(showPasswordButton2, passwordField2.nextSibling);
+
+    function togglePasswordVisibility(passwordField, showPasswordButton) {
+        if (passwordField.type === 'password') {
+            passwordField.type = 'text';
+            showPasswordButton.textContent = 'Hide';
+        } else {
+            passwordField.type = 'password';
+            showPasswordButton.textContent = 'Show';
+        }
+    }
+
+    showPasswordButton1.addEventListener('click', function(event) {
+        event.preventDefault();
+        togglePasswordVisibility(passwordField1, showPasswordButton1);
+    });
+
+    showPasswordButton2.addEventListener('click', function(event) {
+        event.preventDefault();
+        togglePasswordVisibility(passwordField2, showPasswordButton2);
+    });
+
+    function validatePasswords() {
+        passwordError1.textContent = '';
+        passwordError2.textContent = '';
+        if (passwordField1.value !== passwordField2.value) {
+            passwordError1.textContent = 'Passwords do not match';
+            passwordError2.textContent = 'Passwords do not match';
+        }
+    }
+
+    passwordField1.addEventListener('input', validatePasswords);
+    passwordField2.addEventListener('input', validatePasswords);
+
+    passwordField1.addEventListener('input', function() {
+        var password = passwordField1.value;
+        var pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+        if (!pattern.test(password)) {
+            passwordError1.textContent = 'Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.';
+        } else {
+            passwordError1.textContent = '';
+        }
+    });
+    
+    // JavaScript code'
+    // Add your JavaScript code here
+
+
+    
+
+    
+});
+
+</script>
+
+
+
+{% endblock %}

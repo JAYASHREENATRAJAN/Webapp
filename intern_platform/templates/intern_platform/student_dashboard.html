@@ -1,0 +1,121 @@
+{% extends 'intern_platform/student_base.html' %}
+{% load static %}
+{% block title %}Student Dashboard{% endblock %}
+{% block content %}
+    <style>
+        /* Custom CSS styles */
+        h2 {
+            color: #fff; /* Set text color */
+            font-size: 28px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 5px;
+            text-align: center; /* Center align the text */
+            background-color: #007bff; /* Set background color */
+            padding: 10px; /* Add padding for better appearance */
+            border-radius: 8px; /* Add border radius for rounded corners */
+        }
+        /* Styling for form elements */
+        form {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        input[type="text"],
+        input[type="date"],
+        button[type="submit"] {
+            padding: 10px;
+            margin-right: 10px;
+            border: 1px solid #007bff;
+            border-radius: 5px;
+            font-size: 16px;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        button[type="submit"] {
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        /* Styling for internship items */
+        .internship-item {
+            background-color: #f9f9f9;
+            border: 2px solid #007bff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        .internship-item:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transform: translateY(-5px);
+        }
+        .internship-item h3 {
+            color: #007bff;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .internship-item p {
+            color: #666;
+            margin-bottom: 5px;
+        }
+        .internship-item .date-posted {
+            color: #999;
+            font-style: italic;
+        }
+    </style>
+
+    <h2>Student Dashboard</h2>
+
+    <!-- Filtering options -->
+    <form method="get" action="{% url 'intern_platform:dashboard' %}">
+        <input type="text" name="title" placeholder="Search by title">
+        <input type="text" name="industry" placeholder="Search by industry">
+        <input type="date" name="date_posted" placeholder="Search by date posted">
+        <input type="text" name="date_posted" placeholder="Search by internship area">
+        <input type="text" name="date_posted" placeholder="Search by internship country">
+        <input type="text" name="date_posted" placeholder="Search by internship state">
+        <button type="submit">Filter</button>
+    </form>
+
+    <!-- Internship list -->
+    <div class="container">
+        <div class="row">
+            {% for internship in internships %}
+                <div class="col-md-6">
+                    <div class="internship-item">
+                        <h3>{{ internship.title }}</h3>
+                        <p>{{ internship.description }}</p>
+                        <p>Industry: {{ internship.industry }}</p>
+                        <p class="date-posted">Date Posted: {{ internship.date_posted }}</p>
+
+                        
+                        <div class="employer-info">
+                            <h7>Employer Info:</h7>
+                            <p>Company Name: {{ internship.employer.company_name }}</p>
+                            <p>Industry: {{ internship.employer.industry }}</p>
+                            <a href="{% url 'intern_platform:view_employer_profile' internship.employer.id %}">See Employer Profile</a>
+                        </div>
+
+                        <form action="{% url 'intern_platform:internship_detail' internship.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit">Detail view</button>
+                        </form>
+                        <form action="{% url 'intern_platform:apply_for_internship' internship.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit">Apply</button>
+                        </form>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-md-12">
+                    <p>No internships found.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

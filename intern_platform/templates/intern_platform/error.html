@@ -1,0 +1,14 @@
+{% extends 'intern_platform/base.html' %}
+
+{% block title %}Error{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h2>Error</h2>
+        {% if error %}
+            <p>{{ error }}</p>
+        {% else %}
+            <p>Something went wrong.</p>
+        {% endif %}
+    </div>
+{% endblock %}

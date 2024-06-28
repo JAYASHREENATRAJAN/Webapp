@@ -1,0 +1,205 @@
+{% extends 'intern_platform/employer_base.html' %}
+{% load static %}
+{% block title %}Employer Profile{% endblock %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employer Profile</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        textarea {
+            width: calc(100% - 20px);
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        .error {
+            color: red;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Employer Profile</h1>
+        <form id="profileForm" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <label for="companyName">Company Name:</label>
+            <input type="text" id="companyName" name="companyName" value="{{ profile.company_name }}">
+            <span class="error" id="companyNameError"></span><br>
+
+            <label for="companyDescription">Company Description:</label>
+            <textarea id="companyDescription" name="companyDescription" rows="4">{{ profile.company_description }}</textarea>
+            <span class="error" id="companyDescriptionError"></span><br>
+
+            <label for="location">Location:</label>
+            <input type="text" id="location" name="location" value="{{ profile.location }}">
+            <span class="error" id="locationError"></span><br>
+
+            <label for="website">Website:</label>
+            <input type="text" id="website" name="website" value="{{ profile.website }}">
+            <span class="error" id="websiteError"></span><br>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" value="{{ request.user.email }}" readonly><br>
+    
+            <label for="additionalEmail">Additional Email:</label>
+            <input type="email" id="additionalEmail" name="additionalEmail" value="{{ profile.additional_email }}">
+            <span class="error" id="additionalEmailError"></span><br>
+    
+            <label for="phoneNumber">Phone Number:</label>
+            <input type="text" id="phoneNumber" name="phoneNumber" value="{{ profile.phone_number }}">
+            <span class="error" id="phoneNumberError"></span><br>
+    
+            <label for="address">Address:</label><br>
+            <input type="text" id="streetAddress" name="streetAddress" placeholder="Street Address" value="{{ profile.street_address }}"><br>
+            <input type="text" id="streetAddress2" name="streetAddress2" placeholder="Street Address Line 2" value="{{ profile.street_address2 }}"><br>
+            <input type="text" id="city" name="city" placeholder="City" value="{{ profile.city }}"><br>
+            <input type="text" id="state" name="state" placeholder="State / Province" value="{{ profile.state }}"><br>
+            <input type="text" id="zipCode" name="zipCode" placeholder="Postal / Zip Code" value="{{ profile.zip_code }}">
+            <span class="error" id="addressError"></span><br>
+
+            <!-- Add more fields as needed -->
+            <a href="{% url 'intern_platform:employer_generate_report' %}">Generate Report</a> <!-- Add this line -->
+            <form id="profileForm" method="POST" enctype="multipart/form-data">
+
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("profileForm").addEventListener("submit", function(event) {
+            let companyName = document.getElementById("companyName").value;
+            let companyDescription = document.getElementById("companyDescription").value;
+            let location = document.getElementById("location").value;
+            let website = document.getElementById("website").value;
+            let additionalEmail = document.getElementById("additionalEmail").value;
+            let phoneNumber = document.getElementById("phoneNumber").value;
+            let streetAddress = document.getElementById("streetAddress").value;
+            let city = document.getElementById("city").value;
+            let state = document.getElementById("state").value;
+            let zipCode = document.getElementById("zipCode").value;
+            let errors = false;
+
+            // Validation for company name
+            if (companyName.trim() === "") {
+                document.getElementById("companyNameError").innerText = "Company name is required";
+                errors = true;
+            } else {
+                document.getElementById("companyNameError").innerText = "";
+            }
+
+            // Validation for company description
+            if (companyDescription.trim() === "") {
+                document.getElementById("companyDescriptionError").innerText = "Company description is required";
+                errors = true;
+            } else {
+                document.getElementById("companyDescriptionError").innerText = "";
+            }
+
+            // Validation for location
+            if (location.trim() === "") {
+                document.getElementById("locationError").innerText = "Location is required";
+                errors = true;
+            } else {
+                document.getElementById("locationError").innerText = "";
+            }
+
+            // Validation for website
+            if (website.trim() !== "" && !isValidUrl(website)) {
+                document.getElementById("websiteError").innerText = "Please enter a valid URL";
+                errors = true;
+            } else {
+                document.getElementById("websiteError").innerText = "";
+            }
+
+            // Add more validations for other fields
+
+            
+
+            if (additionalEmail.trim() === "") {
+                document.getElementById("additionalEmailError").innerText = "Additional email is required";
+                errors = true;
+            } else {
+                document.getElementById("additionalEmailError").innerText = "";
+            }
+
+            // Validation for phone number
+            if (phoneNumber.trim() === "") {
+                document.getElementById("phoneNumberError").innerText = "Please enter a valid phone number";
+                errors = true;
+            } else {
+                document.getElementById("phoneNumberError").innerText = "";
+            }
+
+            // Validation for address
+            if (streetAddress.trim() === "" || city.trim() === "" || state.trim() === "" || zipCode.trim() === "") {
+                document.getElementById("addressError").innerText = "Address is required";
+                errors = true;
+            } else {
+                document.getElementById("addressError").innerText = "";
+            }
+
+
+            if (errors) {
+                event.preventDefault(); // Prevent form submission if there are errors
+            }
+
+        });
+
+        // Function to validate URL
+        function isValidUrl(url) {
+            var pattern = new RegExp('^(https?:\\/\\/)?'+ // Protocol
+                '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // Domain name
+                '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+                '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // Port and path
+                '(\\?[;&a-z\\d%_.~+=-]*)?'+ // Query string
+                '(\\#[-a-z\\d_]*)?$','i'); // Fragment locator
+            return !!pattern.test(url);
+        }
+    </script>
+</body>
+</html>
+{% endblock %}

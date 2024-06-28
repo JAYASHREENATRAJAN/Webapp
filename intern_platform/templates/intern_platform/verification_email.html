@@ -1,0 +1,7 @@
+{% extends "intern_platform/normbase.html" %}
+
+{% block content %}
+  <h2>Email Verification Successful</h2>
+  <p>Your email address has been successfully verified. You can now log in.</p>
+  <a href="{% url 'intern_platform:login' %}">Log in</a>
+{% endblock %}

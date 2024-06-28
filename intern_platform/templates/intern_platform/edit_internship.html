@@ -1,0 +1,122 @@
+{% extends 'intern_platform/employer_base.html' %}
+{% block title %}Internship Edit{% endblock %}
+{% block content %}
+<!-- edit_internship.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Internship</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Custom styles */
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            margin-top: 50px;
+            max-width: 600px;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #007bff;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        label {
+            font-weight: bold;
+        }
+        textarea.form-control {
+            min-height: 150px;
+        }
+        .btn-primary, .btn-secondary {
+            margin-top: 20px;
+            width: 49%;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Edit Internship</h2>
+        <form id="edit_internship_form" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="title">Title:</label>
+                <input type="text" class="form-control" id="title" name="title" value="{{ internship.title }}" required>
+            </div>
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea class="form-control" id="description" name="description" rows="4" required>{{ internship.description }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="industry">Industry:</label>
+                <input type="text" class="form-control" id="industry" name="industry" value="{{ internship.industry }}" required>
+            </div>
+            <div class="form-group">
+                <label for="role_required">Role Required:</label>
+                <input type="text" class="form-control" id="role_required" name="role_required" value="{{ internship.role_required }}" required>
+            </div>
+            <div class="form-group">
+                <label for="experience">Experience:</label>
+                <input type="text" class="form-control" id="experience" name="experience" value="{{ internship.experience }}" required>
+            </div>
+            <div class="form-group">
+                <label for="qualification">Qualification:</label>
+                <input type="text" class="form-control" id="qualification" name="qualification" value="{{ internship.qualification }}" required>
+            </div>
+            <div class="form-group">
+                <label for="start_date">Start Date:</label>
+                <input type="date" class="form-control" id="start_date" name="start_date" value="{{ internship.start_date }}" required>
+            </div>
+            <div class="form-group">
+                <label for="end_date">End Date:</label>
+                <input type="date" class="form-control" id="end_date" name="end_date" value="{{ internship.end_date }}" required>
+            </div>
+            <div class="form-group">
+                <label for="skills_preferred">Skills Preferred:</label>
+                <input type="text" class="form-control" id="skills_preferred" name="skills_preferred" value="{{ internship.skills_preferred }}" required>
+            </div>
+            <div class="form-group">
+                <label for="stipend">Stipend:</label>
+                <input type="text" class="form-control" id="stipend" name="stipend" value="{{ internship.stipend }}" required>
+            </div>
+            <div class="form-group">
+                <label for="apply_before">Apply Before:</label>
+                <input type="date" class="form-control" id="apply_before" name="apply_before" value="{{ internship.apply_before }}" required>
+            </div>
+            <div class="form-group">
+                <label for="internship_country">Internship Country:</label>
+                <input type="text" class="form-control" id="internship_country" name="internship_country" value="{{ internship.internship_country }}" required>
+            </div>
+            <div class="form-group">
+                <label for="internship_state">Internship State:</label>
+                <input type="text" class="form-control" id="internship_state" name="internship_state" value="{{ internship.internship_state }}" required>
+            </div>
+            <div class="form-group">
+                <label for="internship_area">Internship Area:</label>
+                <input type="text" class="form-control" id="internship_area" name="internship_area" value="{{ internship.internship_area }}" required>
+            </div>
+            
+            <!-- Add more fields here as needed -->
+            <button type="submit" class="btn btn-primary">Update Internship</button>
+            <a href="{% url 'intern_platform:dashboard' %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Add JavaScript code here if needed
+    </script>
+</body>
+</html>
+
+{% endblock%}

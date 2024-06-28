@@ -1,0 +1,83 @@
+{% extends 'intern_platform/student_base.html' %}
+{% load static %}
+{% block title %}Student Report {% endblock %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intern Profile Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        p {
+            margin-bottom: 10px;
+        }
+
+        strong {
+            font-weight: bold;
+        }
+
+        .no-profile {
+            text-align: center;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Intern Profile Report</h1>
+        {% if profile %}
+        <p><strong>First Name:</strong> {{ profile.first_name }}</p>
+        <p><strong>Last Name:</strong> {{ profile.last_name }}</p>
+        <p><strong>Gender:</strong> {{ profile.gender }}</p>
+        <p><strong>Date of Birth:</strong> {{ profile.dob }}</p>
+        <p><strong>Email:</strong>  {{ request.user.email }}</p>
+        <p><strong>Additional Email:</strong> {{ profile.additional_email }}</p>
+        <p><strong>Phone Number:</strong> {{ profile.phone_number }}</p>
+        <p><strong>Address:</strong> {{ profile.address }}</p>
+        <p><strong>Marital Status:</strong> {{ profile.marital_status }}</p>
+        <p><strong>Resume:</strong> {{ profile.resume }}</p>
+        <p><strong>Education:</strong></p>
+<ul>
+    {% for education in profile.educational_background.all %}
+    <li>{{ education.institution }} - {{ education.course }} ({{ education.year_passout }})</li>
+    {% endfor %}
+</ul>
+
+<p><strong>Skills:</strong> {{ profile.skills }}</p>
+<p><strong>Experience:</strong> {{ profile.experience }}</p>
+        
+        <h5>Intern's Profile Edit</h5>
+        <a href="{% url 'intern_platform:intern_profile' %}">Edit Report</a> <!-- Add this line -->
+        <form id="profileForm" method="POST" enctype="multipart/form-data">
+        
+        
+        <!-- Add more fields as needed -->
+        {% else %}
+        <p class="no-profile">No profile found for the logged-in user.</p>
+        {% endif %}
+    </div>
+</body>
+</html>
+{% endblock %}

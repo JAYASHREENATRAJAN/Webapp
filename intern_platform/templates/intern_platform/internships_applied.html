@@ -1,0 +1,96 @@
+{% extends 'intern_platform/student_base.html' %}
+{% block title %}Student Dashboard{% endblock %}
+{% block content %}
+    <style>
+        /* Custom CSS styles */
+        .internship-item {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        .internship-item:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transform: translateY(-5px);
+        }
+        .internship-item h3 {
+            color: #333;
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+        .internship-item p {
+            color: #666;
+            margin-bottom: 5px;
+        }
+        .internship-item .date-posted {
+            color: #999;
+            font-style: italic;
+        }
+
+        h2 {
+            color: #fff; /* Set text color */
+            font-size: 28px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 5px;
+            text-align: center; /* Center align the text */
+            background-color: #007bff; /* Set background color */
+            padding: 10px; /* Add padding for better appearance */
+            border-radius: 8px; /* Add border radius for rounded corners */
+        }
+    </style>
+
+    <h2>Internships Applied</h2>
+    <div class="container">
+        <div class="row">
+            {% for internship in internships_applied %}
+                <div class="col-md-6">
+                    <div class="internship-item">
+                        <h3>{{ internship.title }}</h3>
+                        <p>{{ internship.description }}</p>
+                        <p>Industry: {{ internship.industry }}</p>
+                        
+                        <!-- Add additional details as needed -->
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-md-12">
+                    <p>No internships applied for.</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        <h2>Application Statuses</h2>
+        <div class="row">
+            {% for application in applications %}
+                <div class="col-md-6">
+                    <div class="internship-item">
+                        <h3>{{ application.internship_opportunity.title }}</h3>
+                        <p>Status: {{ application.status }}</p>
+                        <!-- Add additional details as needed -->
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-md-12">
+                    <p>No application statuses available.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        // Custom JavaScript
+        // Add a smooth scroll effect when clicking on internship items
+        document.querySelectorAll('.internship-item').forEach(item => {
+            item.addEventListener('click', () => {
+                window.scroll({
+                    top: item.offsetTop - 100,
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+{% endblock %}

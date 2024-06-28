@@ -1,0 +1,13 @@
+{% extends 'intern_platform/employer_base.html' %}
+
+{% block title %}Contact Student{% endblock %}
+
+{% block content %}
+    <h2>Contact Student</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="hidden" name="receiver_email" value="{{ student_email }}">
+        <button type="submit" class="btn btn-primary">Send Message</button>
+    </form>
+{% endblock %}

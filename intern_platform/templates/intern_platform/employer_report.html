@@ -1,0 +1,71 @@
+{% extends 'intern_platform/employer_base.html' %}
+{% load static %}
+{% block title %}Employer Report{% endblock %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employer Profile Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        p {
+            margin-bottom: 10px;
+        }
+
+        strong {
+            font-weight: bold;
+        }
+
+        .no-profile {
+            text-align: center;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Employer Profile Report</h1>
+        {% if profile %}
+        <p><strong>Company Name:</strong> {{ profile.company_name }}</p>
+        <p><strong>Company Description:</strong> {{ profile.company_description }}</p>
+        <p><strong>Location:</strong> {{ profile.location }}</p>
+        <p><strong>Website:</strong> {{ profile.website }}</p>
+        <p><strong>Email:</strong> {{ request.user.email }}</p>
+        <p><strong>Additional Email:</strong> {{ profile.additional_email }}</p>
+        <p><strong>Phone Number:</strong> {{ profile.phone_number }}</p>
+        <p><strong>Address:</strong> {{ profile.state }},{{ profile.city }}</p>
+        <!-- Add more fields as needed -->
+        <h8>Employer's Profile Edit</h8>
+        <a href="{% url 'intern_platform:employer_profile' %}">Edit Report</a> <!-- Add this line -->
+        <form id="profileForm" method="POST" enctype="multipart/form-data">
+
+
+        {% else %}
+        <p class="no-profile">No profile found for the logged-in user.</p>
+        {% endif %}
+    </div>
+</body>
+</html>
+{% endblock %}

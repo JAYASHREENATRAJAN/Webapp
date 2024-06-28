@@ -1,0 +1,12 @@
+{% extends 'employer_base.html' %}
+{% block title %}Delete Internship{% endblock %}
+
+{% block content %}
+    <h2>Delete Internship</h2>
+    <p>Are you sure you want to delete the internship "{{ internship.title }}"?</p>
+    <!-- Form to confirm deletion -->
+    <form method="post">
+        {% csrf_token %}
+        <input type="submit" value="Confirm Delete">
+    </form>
+{% endblock %}

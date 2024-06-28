@@ -1,0 +1,62 @@
+{% extends 'intern_platform/employer_base.html' %}
+{% block title %}Internship Edit{% endblock %}
+{% block content %}
+<!-- delete_internship.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Internship</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Custom styles */
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            margin-top: 50px;
+            max-width: 600px;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #dc3545;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        p {
+            margin-bottom: 20px;
+        }
+        .btn-danger, .btn-secondary {
+            width: 49%;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Delete Internship</h2>
+        <p>Are you sure you want to delete the internship titled "{{ internship.title }}"?</p>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="internship_id" value="{{ internship.id }}">
+            <button type="submit" class="btn btn-danger">Delete</button>
+            <a href="{% url 'intern_platform:dashboard' %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Add JavaScript code here if needed
+    </script>
+</body>
+</html>
+
+{% endblock%}
